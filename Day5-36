@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_BLOCKS 100
+
+// Define a structure for a disk block
+struct DiskBlock {
+    char data[256]; // Simulated data in the block
+    int next_block; // Pointer to the next block (-1 if no next block)
+};
+
+// Define a structure for a file
+struct File {
+    int first_block; // Pointer to the first block of the file
+    int last_block;  // Pointer to the last block of the file
+};
+
+int main() {
+    struct DiskBlock disk[MAX_BLOCKS]; // Simulated disk blocks
+    struct File files[MAX_BLOCKS];     // Simulated files
+    int num_blocks, num_files, i, j;
+
+    printf("Enter the number of blocks on the disk: ");
+    scanf("%d", &num_blocks);
+
+    // Initialize disk blocks
+    for (i = 0; i < num_blocks; ++i) {
+        disk[i].next_block = -1; // Initialize all blocks with no next block
+    }
+
+    printf("Enter the number of files: ");
+    scanf("%d", &num_files);
+
+    // Initialize files
+    for (i = 0; i < num_files; ++i) {
+        printf("Enter the first and last blocks for File %d: ", i + 1);
+        scanf("%d %d", &files[i].first_block, &files[i].last_block);
+    }
+
+    // Link blocks to simulate the file allocation
+    for (i = 0; i < num_files; ++i) {
+        printf("\nFile %d blocks:\n", i + 1);
+        int current_block = files[i].first_block;
+        while (current_block != -1) {
+            printf("Block %d\n", current_block);
+            current_block = disk[current_block].next_block;
+        }
+    }
+
+    return 0;
+}
