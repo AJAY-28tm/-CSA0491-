@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REQUESTS 1000
+#define MAX_TRACKS 10000
+
+// Function to sort an array in ascending order
+void sort(int arr[], int n) {
+    int i, j, temp;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int requests[MAX_REQUESTS], serviced[MAX_REQUESTS];
+    int num_requests, head_position, total_seek_time = 0;
+    int upper_limit, lower_limit;
+    int i, j, k;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &num_requests);
+
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &head_position);
+
+    printf("Enter the disk requests: ");
+    for (i = 0; i < num_requests; ++i) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Sort the disk requests
+    sort(requests, num_requests);
+
+    // Find the upper and lower limits of the disk
+    printf("Enter the upper limit of the disk: ");
+    scanf("%d", &upper_limit);
+    printf("Enter the lower limit of the disk: ");
+    scanf("%d", &lower_limit);
+
+    // Scan to the right
+    for (i = 0; i < num_requests; ++i) {
+        if (requests[i] >= head_position) {
+            j = i;
+            break;
+        }
+    }
+
+    // Service requests in the direction of increasing track numbers
+    for (k = j; k < num_requests; ++k) {
+        printf("Servicing request %d\n", requests[k]);
+        total_seek_time += abs(head_position - requests[k]);
+        head_position = requests[k];
+        serviced[k] = 1; // Mark the request as serviced
+    }
+
+    // Return the head to the last request
+    head_position = requests[num_requests - 1];
+
+    // Scan to the left
+    for (i = j - 1; i >= 0; --i) {
+        printf("Servicing request %d\n", requests[i]);
+        total_seek_time += abs(head_position - requests[i]);
+        head_position = requests[i];
+        serviced[i] = 1; // Mark the request as serviced
+    }
+
+    printf("Total seek time: %d\n", total_seek_time);
+
+    return 0;
+}
